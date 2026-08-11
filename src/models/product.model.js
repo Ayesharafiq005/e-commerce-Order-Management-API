@@ -7,23 +7,27 @@ const productSchema = new Schema(
             required : [true, "product name is required"],
             trim : true,
         },
+
         description : {
             type : String,
             trim : "true",
             default : ""
         },
+
         price: {
       type: Number,
       required: [true, "Price is required"],
       min: [0.01, "Price must be greater than zero"],
     },
+
     stock : {
         type : Number,
         required : [true, "stock quantity is required"],
         min : [0,"stock cannot be negative !"],
         default : 0
     },
-    category: {
+
+    categoryId : {
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
