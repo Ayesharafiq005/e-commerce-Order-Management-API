@@ -44,6 +44,11 @@ const addToCart = asyncHandler( async(req , res) => {
         await cart.save();
     }
 
+    const updatedCart = await Cart.findById(cart._id).populate({
+    path: "items.product",
+    select: "name price stock description",
+  });
+
     return res
         .status(200)
         .json(new ApiResponse(200, cart , "Item added to cart successfully"));
@@ -69,5 +74,30 @@ const getUserCart = asyncHandler( async( req, res) => {
     .json(new ApiResponse(200, cart , "Cart fetched successfully"));
 });
 
+const removeFromCart = asyncHandler( async(req, res) => {
+    const { productId } = req.params;;
+    const userId = req.user._id;
 
+    const cart = await Cart.findOne({ owner : userId });
 
+    if(!cart) {
+        throw new ApiError(404, "Cart not found");
+    }
+
+    cart.items = cart.items.filter(
+        (item) => item.product.toString() !== productId
+    )
+
+    await cart.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse (200, cart, "Item removed from cart"));
+
+})
+
+export {
+    addToCart,
+    removeFromCart,
+    getUserCart,
+}
