@@ -34,5 +34,8 @@ app.use("/api/v1/categories", categoryRouter)
 import cartRouter from "./routes/cart.routes.js";
 app.use("/api/v1/cart", cartRouter); 
 
+import orderRouter from "./routes/order.routes.js";
+app.use("/api/v1/orders", orderRouter);
+
 
 export {app}
