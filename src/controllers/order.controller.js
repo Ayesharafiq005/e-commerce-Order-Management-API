@@ -92,5 +92,48 @@ const getOrderById = asyncHandler(async(req,res) => {
     .json(new ApiResponse(200, order, "Order details fetched successfully"));
 });
 
+// Admin onlyy
+const getAllOrders = asyncHandler( async( req, res) => {
+    const orders = await Order.find()
+                    .populate("customer", "name email")
+                    .populate("items.product", "name price")
+                    .sort("-createdAt");
 
-export { placeOrder, getOrderById, getUserOrders};
+        return res
+        .status(200).json(new ApiResponse(200, orders, "All orders retrieved successfully"));
+});
+
+// Admin only 
+const updateOrderStatus = asyncHandler(async(req, res) => {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = [ "PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+
+    if(!validStatuses.includes(status?.toUpperCase())){
+        throw new ApiError(400, "Invalid order status ");
+    }
+
+    const order = await Order.findByIdAndUpdate(
+        orderId,
+        { status : status.toUpperCase()},
+        { new : true }
+    )
+
+    if(!order) {
+        throw new ApiError(404, "Order not found");
+    }
+
+    return res
+    .status(200)
+    .json(new ApiResponse (200, order , `Order status updated to ${status}`));
+
+})
+
+
+export { placeOrder,
+         getOrderById, 
+         getUserOrders,
+        getAllOrders,
+        updateOrderStatus,
+        };
