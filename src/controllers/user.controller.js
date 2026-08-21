@@ -205,11 +205,10 @@ if (!incomingRefreshToken) {
   ))
 
  } catch (error) {
-  
+  throw new ApiError(401, error?.message || "Invalid Refresh Token")
  }
 
 })
 
 
-
-export { registerUser , loginUser }
+export { registerUser , loginUser , refreshAccessToken}
